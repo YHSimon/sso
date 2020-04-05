@@ -27,6 +27,7 @@ public class HttpUtil {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
+            //进行拼接 &id=1&name=tom  通过substring(1)去掉字符串首部&
             if (params != null && params.size() > 0) {
                 StringBuffer stringBuffer = new StringBuffer();
                 for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -38,7 +39,6 @@ public class HttpUtil {
                 connection.getOutputStream().write(stringBuffer.substring(1).getBytes("UTF-8"));
             }
             connection.connect();
-            ;
             String response = StreamUtils.copyToString(connection.getInputStream(), Charset.forName("UTF-8"));
             return response;
         } catch (MalformedURLException e) {

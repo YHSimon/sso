@@ -20,7 +20,7 @@ public class TaobaoController {
     @RequestMapping("/logout")
     public String logout(HttpSession session){
         session.invalidate();
+        System.out.println("taobao....logout");
         return "redirect:/taobao";
     }
-
 }
