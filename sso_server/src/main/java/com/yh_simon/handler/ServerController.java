@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,8 +56,11 @@ public class ServerController {
                         String password,
                         String redirectUrl,
                         HttpSession session,
-                        Model model,HttpServletRequest request) {
+                        Model model,
+                        HttpServletResponse response) {
         if ("admin".equals(username) && "123456".equals(password)) {
+            Cookie cookie=new Cookie("redirectUrl", redirectUrl);
+            response.addCookie(cookie);
             //1.创建token
             String token = UUID.randomUUID().toString();
             log.info("token创建成功！token={}", token);
@@ -89,7 +93,16 @@ public class ServerController {
     }
 
     @RequestMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session,HttpServletRequest request,Model model) {
+        Cookie[] cookies = request.getCookies();
+        String redirectUrl=null;
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("redirectUrl")) {
+                redirectUrl=cookie.getValue();
+            }
+        }
+        System.out.println("logout    redirectUrl="+redirectUrl);
+        model.addAttribute("redirectUrl", redirectUrl);
         session.invalidate();
         return "login";
     }
